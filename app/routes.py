@@ -7,16 +7,18 @@ users_schema = UserSchema(many=True)
 
 # Create new user (POST)
 @app.route('/user', methods=['POST'])
-def add_user():
-    username = request.json['username']
-    email = request.json['email']
-
+def add_user():    
+    # Get the JSON POST information
+    request_json = request.get_json()
+    username = request_json.get('username')
+    email = request_json.get('email')
+    # Create the new user based on the JSON request
     new_user = User(username, email)
-
+    # Save the user to the database
     db.session.add(new_user)
     db.session.commit()
-
-    return jsonify(new_user)
+    
+    return jsonify(username)
 
 # Show all users (GET multiple)
 @app.route('/user', methods=['GET'])
@@ -36,8 +38,9 @@ def user_detail(id):
 def user_update(id):
     user = User.query.get(id)    
     # Get info from PUT
-    username = request.json['username']
-    email = request.json['email']
+    request_json = request.get_json()
+    username = request_json.get('username')
+    email = request_json.get('email')
     # Save info to DB
     user.email = email
     user.username = username
